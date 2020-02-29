@@ -21,6 +21,8 @@
 </style>
 
 <style>
+    @import "./fonts/NanumBarunRoboto/stylesheet.css";
+
     body, html {
         background: var(--grey-850);
         margin: 0;

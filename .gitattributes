@@ -1,2 +1,6 @@
 package-lock.json binary
 package-lock.json linguist-generated
+
+app/fonts/**/*.svg binary
+app/fonts/**/*.svg linguist-generated
+
