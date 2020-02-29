@@ -68,9 +68,13 @@
             to: {
                 type: String,
                 required: true
-            },
+            }
+        },
 
-            external: Boolean
+        computed: {
+            external() {
+                return /^[a-z]+:/.test(this.to);
+            }
         },
 
         components: {

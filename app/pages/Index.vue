@@ -1,9 +1,9 @@
 <template>
     <div class="Index">
         <TheLanding />
-        <TheNotifications class="Index__section" />
         <TheServices class="Index__section" />
         <TheActivities class="Index__section" />
+        <TheMembers class="Index__section" />
     </div>
 </template>
 
@@ -16,6 +16,7 @@
             box-sizing: border-box;
             padding: 0 20px;
             margin: 0 auto;
+            margin-top: 50px;
         }
 
         & >>> &__title {
@@ -39,14 +40,14 @@
 <script>
     import TheActivities from "@/components/TheActivities";
     import TheLanding from "@/components/TheLanding";
-    import TheNotifications from "@/components/TheNotifications";
+    import TheMembers from "@/components/TheMembers";
     import TheServices from "@/components/TheServices";
 
     export default {
         components: {
             TheActivities,
             TheLanding,
-            TheNotifications,
+            TheMembers,
             TheServices
         }
     };

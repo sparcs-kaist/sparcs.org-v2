@@ -14,17 +14,17 @@
             </div>
 
             <div class="Service__about">
-                <div class="Service__desc">
+                <p class="Service__desc">
                     {{ $t(service.desc) }}
-                </div>
+                </p>
                 <div class="Service__links">
-                    <AppLink class="Service__link" :to="service.link" external v-if="service.link">
+                    <AppLink class="Service__link" :to="service.link" v-if="service.link">
                         {{ $t('visit') }}
                     </AppLink>
 
                     <template v-if="service.github">
                         <AppLink class="Service__link" v-for="link in service.github" :key="link"
-                            :to="getGithubLink(link)" external>
+                            :to="getGithubLink(link)">
 
                             <IconGithub class="Service__link__icon" />
                             {{ link }}
@@ -88,7 +88,8 @@
 <style scoped>
     .Service {
         display: flex;
-        margin: 50px 0;
+        margin: 60px 0;
+        color: var(--grey-200);
 
         &__logo {
             width: 20vw;
@@ -101,6 +102,7 @@
         }
 
         &__desc {
+            margin: 0;
             font-family: var(--theme-font);
         }
 

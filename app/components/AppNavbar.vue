@@ -19,11 +19,11 @@
         top: 0;
         left: 0;
         transition: backdrop-filter .4s ease, background .4s ease;
-        z-index: 1;
+        z-index: 9;
 
         &::before {
             /* To optimize performance of backdrop-filter, box-shadow animation */
-            
+
             content: '';
             display: block;
 
@@ -35,7 +35,7 @@
 
             background: rgba(var(--grey-900_w), .7);
             backdrop-filter: blur(4px);
-            box-shadow: rgba(0, 0, 0, .15) 0 0 15px 0;
+            box-shadow: var(--shadow-400);
             opacity: 0;
             z-index: -1;
 

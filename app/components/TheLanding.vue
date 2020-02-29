@@ -1,5 +1,15 @@
 <template>
-    <section class="Landing">
+    <section class="Landing" :class="{ 'Landing--many-notifications': notifications.length > 2 }">
+        <div class="Landing__notifications">
+            <div class="Notification"
+                :class="`Notification--alert${notification.level}`"
+                v-for="notification in notifications">
+
+                <h2 class="Notification__title"> {{ notification.title }} </h2>
+                <p class="Notification__content"> {{ notification.content }} </p>
+            </div>
+        </div>
+
         <div class="Landing__card">
             <div class="Landing__card-content">
                 <h1 class="Landing__title">SPARCS</h1>
@@ -38,6 +48,45 @@
 </i18n>
 
 <style scoped>
+    .Notification {
+        padding: 20px 30px;
+        background: var(--grey-800);
+        color: var(--grey-200);
+        font-family: var(--theme-font);
+        border-radius: 5px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &__title {
+            margin: 0;
+        }
+
+        &__content {
+            margin-bottom: 0;
+        }
+
+        &--alert1, &--alert2, &--alert3 {
+            color: var(--alert-foreground-900);
+        }
+
+        &--alert1 {
+            background: var(--alert-level-1);
+        }
+
+        &--alert2 {
+            background: var(--alert-level-2);
+        }
+
+        &--alert3 {
+            background: var(--alert-level-3);
+        }
+    }
+
     .Landing {
         font-family: var(--theme-font);
         position: relative;
@@ -47,6 +96,17 @@
         margin-top: -1px;
         min-height: 100vh;
 
+        &--many-notifications &__text {
+            display: none;
+        }
+
+        &__notifications {
+            position: absolute;
+            top: 100px;
+            left: 60px;
+            max-width: 30vw;
+        }
+
         &__card {
             margin-top: 10vh;
             margin-left: auto;
@@ -55,7 +115,7 @@
             box-sizing: border-box;
 
             background: var(--theme-500);
-            color: var(--grey-900);
+            color: var(--theme-foreground-900);
         }
 
         &__card-content {
@@ -80,7 +140,7 @@
             width: 5rem;
             height: .7rem;
             margin-bottom: 2rem;
-            background: var(--grey-900);
+            background: var(--theme-foreground-900);
         }
 
         &__description {
@@ -97,14 +157,14 @@
         &__link {
             display: flex;
             align-items: center;
-            color: var(--grey-900);
+            color: var(--theme-foreground-900);
             text-decoration: none;
             font-size: 1.5rem;
             margin-top: 5px;
             padding-right: 50px;
 
             &__icon {
-                stroke: var(--grey-900);
+                stroke: var(--theme-foreground-900);
                 height: 1rem;
                 margin-right: .5rem;
                 transition: transform .4s ease;
@@ -145,6 +205,18 @@
         }
     }
 
+    @media (max-width: 1000px) {
+        .Landing {
+            &__notifications {
+                position: relative;
+                max-width: 100%;
+                left: 0;
+                padding: 0 30px;
+                padding-bottom: 50px;
+            }
+        }
+    }
+
     @media (max-width: 1280px) {
         .Landing {
             &__text {
@@ -168,6 +240,10 @@
                 width: 40vw;
             }
         }
+
+        .Notification {
+            max-width: 40vw;
+        }
     }
 </style>
 
@@ -176,6 +252,18 @@
     import LandingText from "@/images/LandingText?inline";
 
     export default {
+        data() {
+            return {
+                notifications: [
+                    /*{
+                        title: '해커톤 개최',
+                        content: '스팍스 내부 해커톤이 1월 5일부터 이틀간 개최되었습니다.',
+                        level: 0
+                    }*/
+                ]
+            };
+        },
+
         components: {
             IconArrow,
             LandingText
