@@ -1,5 +1,4 @@
-const Router = require('@koa/router');
-
-const router = new Router();
+const createAsyncRouter = require('@khinenw/express-async-router');
+const router = createAsyncRouter();
 
 module.exports = router;

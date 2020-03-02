@@ -17,9 +17,9 @@ module.exports = {
     },
 
     middleware() {
-        return async (ctx, next) => {
-            ctx.db = this.database;
-            await next();
+        return async (req, res, next) => {
+            req.db = this.database;
+            next();
         };
     }
 };

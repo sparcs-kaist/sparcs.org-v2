@@ -1,38 +1,33 @@
 const adminRequired = require('../middlewares/adminRequired');
-const axios = require('axios');
-const axiosCookieJarSupport = require('axios-cookiejar-support').default;
-const config = require('../../config.json');
+const createAsyncRouter = require('@khinenw/express-async-router');
+const createError = require('../utils/createError');
+const memvers = require('../utils/memvers');
 const sparcsRequired = require('../middlewares/sparcsRequired');
 
 const { CookieJar } = require('tough-cookie');
-const Router = require('@koa/router');
 
-const memvers = axios.create({
-    baseURL: config.memversUrl,
-    validateStatus: false
-});
-
-axiosCookieJarSupport(memvers);
-
-const router = new Router();
+const router = createAsyncRouter();
 const cache = { lastUpdate: 0 };
 const projection = {
     id: true, name: true, is_developer: true, is_designer: true, is_undergraduate: true,
-    github_id: true, linkedin_url: true, behance_url: true, website: true
+    github_id: true, linkedin_url: true, behance_url: true, website: true, is_private: true
 };
 
-router.get('/', async ctx => {
-    const users = await ctx.db
+router.get('/', async (req, res) => {
+    const users = await req.db
         .collection('members')
         .find({ is_private: false }, { projection })
         .toArray();
 
-    ctx.body = users;
+    res.json({
+        ok: true,
+        users
+    });
 });
 
-router.get('/count', async ctx => {
+router.get('/count', async (req, res) => {
     if(cache.lastUpdate + 24 * 60 * 60 * 1000 < Date.now()) {
-        const aggregate = await ctx.db
+        const aggregate = await req.db
             .collection('members')
             .aggregate(
                 { group: {
@@ -72,29 +67,37 @@ router.get('/count', async ctx => {
         cache.lastUpdate = Date.now();
     }
 
-    ctx.body = cache.count;
+    res.json({
+        ok: true,
+        count: cache.count
+    });
 });
 
-router.get('/all', sparcsRequired, async ctx => {
-    ctx.body = cache.all;
+router.get('/all', sparcsRequired, async (req, res) => {
+    const users = await req.db
+        .collection('members')
+        .find({}, { projection })
+        .toArray();
+
+    res.json({
+        ok: true,
+        users
+    });
 });
 
-router.post('/refresh', adminRequired, async ctx => {
-    if(!ctx.request.body)
-        return ctx.throw(400, 'invalid-body');
-
-    const { ldapId, ldapPw } = ctx.request.body;
+router.post('/refresh', adminRequired, async (req, res) => {
+    const { ldapId, ldapPw } = req.body;
     if(typeof ldapId !== 'string' || typeof ldapPw !== 'string')
-        return ctx.throw(401, 'ldap-auth-failed');
+        return createError(401, 'ldap-auth-failed');
 
     const cookieJar = new CookieJar();
     const { data: loginData } = await memvers.post('/login', { un: ldapId, pw: ldapPw }, { jar: cookieJar });
     if(!loginData.success)
-        return ctx.throw(401, 'ldap-auth-failed');
+        return createError(401, 'ldap-auth-failed');
 
-    const { data } = await memvers.get('https://memvers-api.sparcs.org/users/all', { jar: cookieJar });
+    const { data } = await memvers.get('/users/all', { jar: cookieJar, withCredentials: true });
     if(!data.objs || !data.success)
-        return ctx.throw(500, 'memvers-failure-public');
+        return createError(500, 'memvers-failure-fetch');
 
     const handleBooleanField = (...fieldNames) => user => {
         for(const fieldName of fieldNames) {
@@ -108,21 +111,23 @@ router.post('/refresh', adminRequired, async ctx => {
         handleBooleanField('is_private', 'is_developer', 'is_designer', 'is_undergraduate')
     );
 
-    await ctx.db
-        .collection('members')
-        .drop();
+    try {
+        await req.db
+            .collection('members')
+            .drop();
+    } catch(err) {}
 
-    await ctx.db
+    await req.db
         .collection('members')
         .insertMany(users);
 
     // Invalidate cache
     cache.lastUpdate = 0;
 
-    ctx.body = {
+    res.json({
         ok: true,
-        users: cache.counts.all.all
-    };
+        userCounts: users.length
+    });
 });
 
 module.exports = router;
