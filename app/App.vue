@@ -1,6 +1,6 @@
 <template>
     <div class="App">
-        <AppNavbar :background="scroll > innerHeight * .5" />
+        <AppNavbar :background="scroll > 50" />
 
         <transition name="fade">
             <router-view />
@@ -44,9 +44,13 @@
 
         --theme-400_w: 236, 143, 038;
         --theme-500_w: 235, 160, 042;
+        --theme-900_w: 248, 222, 182;
+        --theme-foreground-200_w: 034, 034, 034;
         --theme-foreground-900_w: 255, 255, 255;
         --theme-400: rgb(var(--theme-400_w)); /* #ec8f26 */
         --theme-500: rgb(var(--theme-500_w)); /* #eba02a */
+        --theme-900: rgb(var(--theme-900_w)); /* #f8deb6 */
+        --theme-foreground-200: rgb(var(--theme-foreground-200_w)); /* #222222 */
         --theme-foreground-900: rgb(var(--theme-foreground-900_w)); /* #ffffff */
 
         --grey-900_w: 255, 255, 255;
@@ -55,6 +59,7 @@
         --grey-780_w: 234, 234, 234;
         --grey-750_w: 225, 225, 225;
         --grey-650_w: 161, 161, 161;
+        --grey-600_w: 138, 138, 138;
         --grey-200_w: 034, 034, 034;
         --grey-100_w: 016, 016, 016;
         --grey-000_w: 000, 000, 000;
@@ -64,6 +69,7 @@
         --grey-780: rgb(var(--grey-780_w)); /* #eaeaea */
         --grey-750: rgb(var(--grey-750_w)); /* #e1e1e1 */
         --grey-650: rgb(var(--grey-650_w)); /* #a1a1a1 */
+        --grey-600: rgb(var(--grey-600_w)); /* #959595 */
         --grey-200: rgb(var(--grey-200_w)); /* #222222 */
         --grey-100: rgb(var(--grey-100_w)); /* #101010 */
         --grey-000: rgb(var(--grey-000_w)); /* #000000 */
@@ -71,6 +77,12 @@
         --shadow-400: 0 0 15px 0 rgba(var(--grey-000_w), .15);
         --shadow-500: 0 2px 20px 0 rgba(var(--grey-000_w), .15);
     }
+
+    ::selection {
+        color: var(--theme-foreground-200);
+        background: rgba(var(--theme-900_w), .75);
+    }
+
 </style>
 
 <script>
@@ -86,7 +98,11 @@
         },
 
         mounted() {
-            this.resizeListener = () => { this.innerHeight = window.innerHeight; };
+            this.resizeListener = () => {
+                this.innerHeight = window.innerHeight;
+                this.scroll = window.scrollY;
+            };
+
             this.scrollListener = () => { this.scroll = window.scrollY; };
 
             window.addEventListener('resize', this.resizeListener);

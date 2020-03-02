@@ -1,12 +1,13 @@
 <template>
-    <section class="Landing" :class="{ 'Landing--many-notifications': notifications.length > 2 }">
+    <section class="Landing" :class="{ 'Landing--many-notifications': manyNotifications }">
         <div class="Landing__notifications">
             <div class="Notification"
                 :class="`Notification--alert${notification.level}`"
                 v-for="notification in notifications">
 
                 <h2 class="Notification__title"> {{ notification.title }} </h2>
-                <p class="Notification__content"> {{ notification.content }} </p>
+                <p class="Notification__content" v-if="notification.raw" v-html="notification.content"></p>
+                <p class="Notification__content" v-else> {{ notification.content }} </p>
             </div>
         </div>
 
@@ -101,15 +102,15 @@
         }
 
         &__notifications {
-            position: absolute;
-            top: 100px;
-            left: 60px;
+            padding-top: 100px;
+            padding-left: 60px;
             max-width: 30vw;
         }
 
         &__card {
-            margin-top: 10vh;
-            margin-left: auto;
+            position: absolute;
+            top: 10vh;
+            right: 0;
             width: 60vw;
             padding: 50px;
             box-sizing: border-box;
@@ -184,11 +185,21 @@
         }
     }
 
-    @media (max-width: 800px) {
+    @media (max-width: 1000px) {
         .Landing {
+            &__notifications {
+                position: relative;
+                max-width: 100%;
+                padding: 100px 30px;
+                padding-bottom: 30px;
+            }
+
             &__card {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 0 auto;
                 width: 90vw;
-                margin-right: auto;
             }
 
             &__title {
@@ -201,18 +212,6 @@
 
             &__links {
                 margin-top: 20px;
-            }
-        }
-    }
-
-    @media (max-width: 1000px) {
-        .Landing {
-            &__notifications {
-                position: relative;
-                max-width: 100%;
-                left: 0;
-                padding: 0 30px;
-                padding-bottom: 50px;
             }
         }
     }
@@ -254,14 +253,14 @@
     export default {
         data() {
             return {
-                notifications: [
-                    /*{
-                        title: '해커톤 개최',
-                        content: '스팍스 내부 해커톤이 1월 5일부터 이틀간 개최되었습니다.',
-                        level: 0
-                    }*/
-                ]
+                notifications: []
             };
+        },
+
+        computed: {
+            manyNotifications() {
+                return this.notifications.length > 2;
+            }
         },
 
         components: {

@@ -1,5 +1,9 @@
 <template>
-    <a class="AppLink" :href="to" rel="noopener" target="_blank" v-if="external">
+    <span class="AppLink AppLink--disabled" v-if="disabled">
+        <slot></slot>
+    </span>
+
+    <a class="AppLink" :href="to" rel="noopener" target="_blank" v-else-if="external">
         <slot></slot>
         <IconArrow class="AppLink__icon" />
     </a>
@@ -28,14 +32,6 @@
         background: var(--grey-780);
         transition: background .4s ease;
 
-        &:first-child {
-            margin-left: 0;
-        }
-
-        &:last-child {
-            margin-right: 0;
-        }
-
         &:hover {
             background: var(--grey-800);
         }
@@ -57,6 +53,18 @@
         &:hover &__icon {
             transform: translateX(5px) rotate(180deg);
         }
+
+        &&--disabled {
+            cursor: not-allowed;
+            box-shadow: none;
+            background: var(--grey-750);
+            color: var(--grey-650);
+
+            &:hover {
+                background: var(--grey-750);
+                color: var(--grey-650);
+            }
+        }
     }
 </style>
 
@@ -68,6 +76,10 @@
             to: {
                 type: String,
                 required: true
+            },
+
+            disabled: {
+                type: Boolean
             }
         },
 

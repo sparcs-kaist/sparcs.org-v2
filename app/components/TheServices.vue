@@ -92,13 +92,23 @@
         color: var(--grey-200);
 
         &__logo {
-            width: 20vw;
+            width: 25vw;
             max-width: 200px;
-            height: 5vw;
+            height: 8.5vw;
             max-height: 50px;
             object-fit: contain;
             object-position: center left;
             margin-right: 20px;
+        }
+
+        &__about {
+            width: 0;
+            flex: 1;
+        }
+
+        &__status {
+            display: flex;
+            flex-direction: column;
         }
 
         &__desc {
@@ -133,10 +143,22 @@
         }
     }
 
-    @media (max-width: 1280px) {
+    @media (max-width: 360px) {
         .Service {
+            flex-direction: column;
+
             &__logo {
-                margin-right: 50px;
+                width: 30vw;
+                height: 10vw;
+                margin-right: 0;
+            }
+
+            &__status {
+                margin-bottom: 20px;
+            }
+
+            &__about {
+                width: 100%;
             }
         }
     }

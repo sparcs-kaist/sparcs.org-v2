@@ -1,35 +1,34 @@
+const config = require('../config.json');
 const bodyParser = require('koa-bodyparser');
+const serve = require('koa-static');
+const path = require('path');
+const routeAlbum = require('./routes/album');
+const routeMember = require('./routes/member');
+const routeNotification = require('./routes/notification');
+const routeRecruiting = require('./routes/recruiting');
+const routeSeminar = require('./routes/seminar');
+
 const Koa = require('koa');
 
-const app = new Koa();
-app.use(bodyParser);
-
-/* const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const config = require('../config.json');
-const express = require('express');
-const path = require('path');
-
-const rootPath = path.resolve(__dirname, '..');
+const env = (process.env.NODE_ENV || 'development');
+const maxAge = env === 'development' ? 0 : 1000 * 60 * 60 * 6;
 const port = parseInt(process.env.PORT) || '3000';
+const rootPath = path.resolve(__dirname, '..');
 
-const app = express();
-app.set('port', port);
-app.set('trust proxy', 'loopback');
+const app = new Koa();
+app.use(bodyParser());
+app.use('/api/album', routeAlbum);
+app.use('/api/member', routeMember);
+app.use('/api/notification', routeNotification);
+app.use('/api/recruiting', routeRecruiting);
+app.use('/api/seminar', routeSeminar);
+app.use('/assets', serve(path.join(rootPath, 'assets'), { maxage: maxAge }));
+app.use('/dist', serve(path.join(rootPath, 'dist'), { maxage: maxAge }));
+app.use(ctx => {
+    ctx.response.type = 'text/html';
+    return send(ctx, path.join(rootPath, 'dist', 'index.html'));
+});
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.get('/api/album', routeAlbum);
-app.get('/api/member', routeMember);
-app.get('/api/notification', routeNotification);
-app.get('/api/seminar', routeSeminar);
-app.use('/assets', express.static(path.join(rootPath, 'assets')));
-app.use('/dist', express.static(path.join(rootPath, 'dist'));
-app.use((req, res) => {
-    res.sendFile(path.join(rootPath, 'dist', 'index.html'));
-}); */
-
-app.listen(app.get('port'));
+app.listen(port);
 
 console.log(`Listening on port ${port}...`);

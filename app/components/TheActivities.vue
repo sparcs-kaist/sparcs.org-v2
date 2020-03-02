@@ -87,6 +87,20 @@
             margin-bottom: 0;
         }
     }
+
+    @media (max-width: 768px) {
+        .Activities{
+            &__content {
+                flex-direction: column;
+            }
+
+            &__column {
+                width: 100%;
+                margin: 0;
+                margin-top: 20px;
+            }
+        }
+    }
 </style>
 
 <script>

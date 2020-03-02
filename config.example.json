@@ -1,5 +1,3 @@
 {
-    "nuguId": "memvers-id-here",
-    "nuguPassword": "memvers-pw-here",
-    "nuguEndpoint": "https://memvers-api.sparcs.org"
+    "memversUrl": "https://memvers-api.sparcs.org"
 }

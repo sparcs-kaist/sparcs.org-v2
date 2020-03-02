@@ -8,8 +8,15 @@
                 {{ $t('recruiting-desc') }}
             </p>
             <div class="Section__links">
-                <app-link to="https://apply.sparcs.org" class="Section__link Section__link--primary">
-                    {{ $t('recruiting-link') }}
+                <app-link to="https://apply.sparcs.org" :disabled="!recruitingEnabled"
+                    class="Section__link Section__link--primary">
+
+                    <template v-if="recruitingEnabled">
+                        {{ $t('recruiting-link') }}
+                    </template>
+                    <template v-else>
+                        {{ $t('recruiting-disabled') }}
+                    </template>
                 </app-link>
             </div>
         </div>
@@ -32,6 +39,7 @@
     ko:
         recruiting: '리크루팅'
         recruiting-link: '리크루팅'
+        recruiting-disabled: '현재 리크루팅 기간이 아닙니다.'
         recruiting-desc: >
             스팍스는 같이 개발을 진행할 열정이 넘치시는 분들을 매 학기 모집하고 있습니다.
             자세한 사항은 리크루팅 페이지를 참조해주세요.
@@ -59,7 +67,7 @@
 
         &__link {
             box-shadow: var(--shadow-500);
-            
+
             &--primary {
                 color: var(--theme-foreground-900);
                 background: var(--theme-500);
@@ -80,6 +88,12 @@
     import AppLink from "@/components/AppLink";
 
     export default {
+        data() {
+            return {
+                recruitingEnabled: false
+            };
+        },
+
         components: {
             AppLink
         }

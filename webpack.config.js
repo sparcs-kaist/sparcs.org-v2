@@ -7,6 +7,32 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const nodeEnv = (process.env.NODE_ENV || 'development').trim();
 
+const babelLoader = {
+    loader: 'babel-loader',
+
+    options: {
+        presets: [
+            ['@babel/preset-env', { targets: 'last 4 versions' }]
+        ]
+    }
+};
+
+const postcssLoader = {
+    loader: 'postcss-loader',
+    options: {
+        sourceMap: true,
+        plugins: [
+            require('postcss-nested'),
+            require('postcss-preset-env')({
+                browsers: [
+                    'last 4 versions'
+                ],
+                stage: 0
+            })
+        ]
+    }
+};
+
 const styleLoader = nodeEnv !== 'production'
     ? 'vue-style-loader'
     : MiniCssExtractPlugin.loader;
@@ -19,12 +45,7 @@ const cssLoader = [
             importLoaders: 1
         }
     },
-    {
-        loader: 'postcss-loader',
-        options: {
-            sourceMap: true
-        }
-    }
+    postcssLoader
 ];
 
 module.exports = {
@@ -48,7 +69,7 @@ module.exports = {
                 options: {
                     loaders: {
                         'css': cssLoader,
-                        'js': 'babel-loader'
+                        'js': babelLoader
                     }
                 }
             },
@@ -64,7 +85,7 @@ module.exports = {
 
             {
                 test: /\.js$/,
-                loader: 'babel-loader',
+                use: babelLoader,
                 exclude: [/node_modules/]
             },
 
@@ -79,7 +100,7 @@ module.exports = {
                     {
                         resourceQuery: /inline/,
                         use: [
-                            'babel-loader',
+                            babelLoader,
                             {
                                 loader: 'vue-svg-loader',
                                 options: {

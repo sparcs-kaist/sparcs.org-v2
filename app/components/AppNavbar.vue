@@ -68,6 +68,19 @@
             height: 40px;
         }
     }
+
+    @media (max-width: 768px) {
+        .AppNavbar {
+            &__content {
+                padding: 15px;
+            }
+
+            &__logo {
+                width: 180px;
+                height: 35px;
+            }
+        }
+    }
 </style>
 
 <script>
