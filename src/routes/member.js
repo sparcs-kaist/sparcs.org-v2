@@ -1,7 +1,10 @@
 const adminRequired = require('../middlewares/adminRequired');
 const axios = require('axios');
+const axiosCookieJarSupport = require('axios-cookiejar-support').default;
 const config = require('../../config.json');
 const sparcsRequired = require('../middlewares/sparcsRequired');
+
+const { CookieJar } = require('tough-cookie');
 const Router = require('@koa/router');
 
 const memvers = axios.create({
@@ -9,46 +12,66 @@ const memvers = axios.create({
     validateStatus: false
 });
 
+axiosCookieJarSupport(memvers);
+
 const router = new Router();
-const cache = {};
-
-const updateCache = users => {
-    cache.all = users;
-    cache.public = users.filter(user => !user.is_private);
-
-    const countMember = fn => {
-        return users.reduce((accumulator, member) => {
-            if(fn(member))
-                return ++accumulator;
-
-            return accumulator;
-        }, 0);
-    };
-
-    const count = {};
-    count.all = {
-        all: countMember(() => true),
-        undergraduate: countMember(member => member.is_undergraduate)
-    };
-
-    count.designers = {
-        all: countMember(member => member.is_designer),
-        undergraduate: countMember(member => member.is_designer && member.is_undergraduate)
-    };
-
-    count.developers = {
-        all: countMember(member => member.is_developer),
-        undergraduate: countMember(member => member.is_developer && member.is_undergraduate)
-    };
-
-    cache.count = count;
+const cache = { lastUpdate: 0 };
+const projection = {
+    id: true, name: true, is_developer: true, is_designer: true, is_undergraduate: true,
+    github_id: true, linkedin_url: true, behance_url: true, website: true
 };
 
 router.get('/', async ctx => {
-    ctx.body = cache.public;
+    const users = await ctx.db
+        .collection('members')
+        .find({ is_private: false }, { projection })
+        .toArray();
+
+    ctx.body = users;
 });
 
 router.get('/count', async ctx => {
+    if(cache.lastUpdate + 24 * 60 * 60 * 1000 < Date.now()) {
+        const aggregate = await ctx.db
+            .collection('members')
+            .aggregate(
+                { group: {
+                    _id: null,
+                    developer: { $sum: {
+                        $cond: { if: '$is_developer', then: 1, else: 0 }
+                    } },
+                    developer_under: { $sum: {
+                        $cond: {
+                            if: { $and: ['$is_developer', '$is_undergraduate'] },
+                            then: 1,
+                            else: 0
+                        }
+                    } },
+                    designer: { $sum: {
+                        $cond: { if: '$is_designer', then: 1, else: 0 }
+                    } },
+                    designer_under: { $sum: {
+                        $cond: {
+                            if: { $and: ['$is_designer', '$is_undergraduate'] },
+                            then: 1,
+                            else: 0
+                        }
+                    } },
+                    all: { $sum: 1 },
+                    under: { $sum: {
+                        $cond: { if: '$is_undergraduate', then: 1, else: 0 }
+                    } }
+                } }
+            )
+            .toArray();
+
+        if(aggregate.length <= 0)
+            aggregate.push({ developer: 0, developer_under: 0, designer: 0, designer_under: 0, all: 0, under: 0 });
+
+        cache.count = aggregate.shift();
+        cache.lastUpdate = Date.now();
+    }
+
     ctx.body = cache.count;
 });
 
@@ -57,10 +80,19 @@ router.get('/all', sparcsRequired, async ctx => {
 });
 
 router.post('/refresh', adminRequired, async ctx => {
-    if(!ctx.request.body.ldapId || !ctx.request.body.ldapPw)
-        return ctx.throw(401, 'ldap-needed');
+    if(!ctx.request.body)
+        return ctx.throw(400, 'invalid-body');
 
-    const { data } = await memvers.get('https://memvers-api.sparcs.org/users/all');
+    const { ldapId, ldapPw } = ctx.request.body;
+    if(typeof ldapId !== 'string' || typeof ldapPw !== 'string')
+        return ctx.throw(401, 'ldap-auth-failed');
+
+    const cookieJar = new CookieJar();
+    const { data: loginData } = await memvers.post('/login', { un: ldapId, pw: ldapPw }, { jar: cookieJar });
+    if(!loginData.success)
+        return ctx.throw(401, 'ldap-auth-failed');
+
+    const { data } = await memvers.get('https://memvers-api.sparcs.org/users/all', { jar: cookieJar });
     if(!data.objs || !data.success)
         return ctx.throw(500, 'memvers-failure-public');
 
@@ -77,14 +109,15 @@ router.post('/refresh', adminRequired, async ctx => {
     );
 
     await ctx.db
-        .collection('home-members')
+        .collection('members')
         .drop();
 
     await ctx.db
-        .collection('home-members')
+        .collection('members')
         .insertMany(users);
 
-    updateCache(users);
+    // Invalidate cache
+    cache.lastUpdate = 0;
 
     ctx.body = {
         ok: true,
@@ -92,13 +125,4 @@ router.post('/refresh', adminRequired, async ctx => {
     };
 });
 
-module.exports = async database => {
-    const users = await database
-        .collection('home-members')
-        .find({})
-        .toArray();
-
-    updateCache(users);
-    
-    return router;
-};
+module.exports = router;

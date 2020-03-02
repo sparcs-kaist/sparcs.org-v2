@@ -193,7 +193,7 @@
                         name: 'Geoul',
                         desc: 'service-geoul',
                         image: ServiceGeoul,
-                        link:  'https://ftp.kaist.ac.kr',
+                        link:  'http://ftp.kaist.ac.kr',
                         github: [ 'ftp.kaist.ac.kr' ]
                     },
 
