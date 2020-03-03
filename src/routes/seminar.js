@@ -4,6 +4,8 @@ const createAsyncRouter = require('@khinenw/express-async-router');
 const sparcsRequired = require('../middlewares/sparcsRequired');
 const upload = require('../middlewares/upload');
 
+const { Seminar } = require('../schema');
+
 const router = createAsyncRouter();
 router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) => {
     const { title, speaker, date } = req.body;
@@ -27,9 +29,11 @@ router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) =
         seminar.date = date;
     }
 
-    const files = req.files.map(({ originalname, location }) => ({ originalname, location }));
+    const sources = req.files.map(({ location }) => location);
+    seminar.sources = sources;
 
-    const seminar = { title, speaker, date, files };
+    const tuple = new Seminars(seminar);
+    await tuple.save();
 });
 
 module.exports = router;

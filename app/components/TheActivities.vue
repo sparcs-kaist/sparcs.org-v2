@@ -10,7 +10,7 @@
                         {{ $t(`${activity.name}-desc`) }}
                     </p>
                     <div class="Card__links" v-if="activity.link">
-                        <app-link :to="activity.link"> {{ $t('link') }} </app-link>
+                        <AppLink :to="activity.link"> {{ $t('link') }} </AppLink>
                     </div>
                 </div>
             </div>

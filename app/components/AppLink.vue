@@ -3,6 +3,11 @@
         <slot></slot>
     </span>
 
+    <button class="AppLink" :type="submit ? 'submit' : 'button'" @click="handleClick" v-else-if="button">
+        <slot></slot>
+        <IconArrow class="AppLink__icon" />
+    </button>
+
     <a class="AppLink" :href="to" rel="noopener" target="_blank" v-else-if="external">
         <slot></slot>
         <IconArrow class="AppLink__icon" />
@@ -22,6 +27,8 @@
         padding: 10px 15px;
         margin: 5px 5px;
 
+        border: none;
+        outline: none;
         color: var(--grey-200);
         font-family: var(--title-font);
         font-size: 1.05rem;
@@ -74,11 +81,18 @@
     export default {
         props: {
             to: {
-                type: String,
-                required: true
+                type: String
             },
 
             disabled: {
+                type: Boolean
+            },
+
+            button: {
+                type: Boolean
+            },
+
+            submit: {
                 type: Boolean
             }
         },
@@ -86,6 +100,15 @@
         computed: {
             external() {
                 return /^[a-z]+:/.test(this.to);
+            }
+        },
+
+        methods: {
+            handleClick(event) {
+                if(!this.submit)
+                    event.preventDefault();
+
+                this.$emit('click', event);
             }
         },
 

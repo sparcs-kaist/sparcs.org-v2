@@ -7,7 +7,13 @@
 
                 <h2 class="Notification__title"> {{ notification.title }} </h2>
                 <p class="Notification__content" v-if="notification.raw" v-html="notification.content"></p>
-                <p class="Notification__content" v-else> {{ notification.content }} </p>
+                <p class="Notification__content" v-else>{{ notification.content }}</p>
+
+                <AppLink class="Notification__delete" v-if="admin" button
+                    @click="deleteNotification(notification._id)">
+
+                    {{ $t('close') }}
+                </AppLink>
             </div>
         </div>
 
@@ -30,13 +36,17 @@
                 </div>
             </div>
 
-            <LandingText class="Landing__text"/>
+            <transition name="Fade">
+                <LandingText class="Landing__text"/>
+            </transition>
         </div>
     </section>
 </template>
 
 <i18n>
     ko:
+        close: '알림 삭제'
+
         description: >
             SPARCS: Programmers’ Association for Researching Computer Systems
 
@@ -69,6 +79,11 @@
 
         &__content {
             margin-bottom: 0;
+            white-space: pre-line;
+        }
+
+        &__delete {
+            margin-top: 10px;
         }
 
         &--alert1, &--alert2, &--alert3 {
@@ -247,23 +262,55 @@
 </style>
 
 <script>
+    import api from "@/src/api";
+
+    import AppLink from "@/components/AppLink";
     import IconArrow from "@/images/IconArrow?inline";
     import LandingText from "@/images/LandingText?inline";
 
     export default {
         data() {
             return {
-                notifications: []
+                notifications: [],
+                loaded: false
             };
         },
 
         computed: {
+            admin() {
+                if(!this.$store.state.user)
+                    return false;
+
+                return this.$store.state.user.admin;
+            },
+
             manyNotifications() {
+                if(!this.loaded)
+                    return true;
+
                 return this.notifications.length > 2;
             }
         },
 
+        methods: {
+            async deleteNotification(id) {
+                await api(`/notification/${id}`, 'delete');
+                await this.fetchNotification();
+            },
+
+            async fetchNotification() {
+                const { notifications } = await api('/notification');
+                this.notifications = notifications;
+            }
+        },
+
+        async created() {
+            await this.fetchNotification();
+            this.loaded = true;
+        },
+
         components: {
+            AppLink,
             IconArrow,
             LandingText
         }

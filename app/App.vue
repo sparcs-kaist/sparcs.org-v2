@@ -1,8 +1,8 @@
 <template>
     <div class="App">
-        <AppNavbar :background="scroll > 50" />
+        <AppNavbar :background="scroll > 0" />
 
-        <transition name="fade">
+        <transition name="Fade" mode="out-in">
             <router-view />
         </transition>
 
@@ -11,12 +11,22 @@
 </template>
 
 <style scoped>
-    .fade-enter-active, .fade-leave-active {
-        transition: opacity .4s ease;
-    }
+    .App {
+        & >>> &__page {
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+            padding: 0 30px;
+            margin: 0 auto;
+            margin-top: 100px;
+        }
 
-    .fade-enter, .fade-leave-to {
-        opacity: 0;
+        & >>> &__title {
+            margin-left: -15px;
+            font-family: var(--title-font);
+            font-weight: 700;
+            font-size: 2.3rem;
+        }
     }
 </style>
 
@@ -33,10 +43,12 @@
         --title-font: 'Raleway', 'NanumBarunRoboto', sans-serif;
         --theme-font: 'NanumBarunRoboto', sans-serif;
 
+        --alert-success_w: 139, 195, 074;
         --alert-level-1_w: 235, 160, 042;
         --alert-level-2_w: 236, 064, 122;
         --alert-level-3_w: 092, 051, 218;
         --alert-foreground-900_w: 255, 255, 255;
+        --alert-success: rgb(var(--alert-success_w)); /* #8bc34a */
         --alert-level-1: rgb(var(--alert-level-1_w)); /* #eba02a */
         --alert-level-2: rgb(var(--alert-level-2_w)); /* #ec407a */
         --alert-level-3: rgb(var(--alert-level-3_w)); /* #5c33da */
@@ -83,6 +95,29 @@
         background: rgba(var(--theme-900_w), .75);
     }
 
+    .Fade {
+        &-enter-active, &-leave-active {
+            transition: opacity .4s ease;
+        }
+
+        &-enter, &-leave-to {
+            opacity: 0;
+        }
+    }
+
+    .FadeMove {
+        &-enter-active, &-leave-active, &-move {
+            transition: opacity .4s ease, transform .4s ease;
+        }
+
+        &-leave-active {
+            position: absolute;
+        }
+
+        &-enter, &-leave-to {
+            opacity: 0;
+        }
+    }
 </style>
 
 <script>

@@ -2,7 +2,14 @@ const config = require('../../config.json');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
-const secret = fs.readFileSync(config.privateKey);
+if(!['RS256', 'HS256'].includes(config.jwtMode)) {
+    console.error("Unknown JWT Mode!");
+    config.jwtMode = 'RS256';
+}
+
+const secret = config.jwtMode === 'RS256' ?
+    fs.readFileSync(config.privateKey) :
+    config.secret;
 
 module.exports = {
     generate(payload) {
@@ -10,7 +17,7 @@ module.exports = {
             jwt.sign(
                 payload,
                 secret,
-                { algorithm: 'RS256', expiresIn: '1h' },
+                { algorithm: config.jwtMode, expiresIn: config.tokenExpiresIn },
                 (err, token) => {
                     if(err) return reject(err);
                     resolve(token);
@@ -24,7 +31,7 @@ module.exports = {
             jwt.verify(
                 token,
                 secret,
-                { algorithms: ['RS256'] },
+                { algorithms: [config.jwtMode] },
                 (err, payload) => {
                     if(err) {
                         return resolve({

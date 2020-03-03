@@ -2,16 +2,28 @@
     <header class="AppNavbar" :class="{ 'AppNavbar--background': background }">
         <div class="AppNavbar__border"></div>
         <div class="AppNavbar__content">
-            <div class="AppNavbar__branding">
+            <router-link to="/" class="AppNavbar__branding" exact-active-class="AppNavbar__branding--active">
                 <SparcsLogo class="AppNavbar__logo" />
-            </div>
+            </router-link>
 
             <nav class="AppNavbar__items">
-
+                <template>
+                    <button class="AppNavbar__item AppNavbar__item--button" @click="login" v-if="!name">
+                        {{ $t('login') }}
+                    </button>
+                    <span class="AppNavbar__item" v-else>
+                        {{ name }}
+                    </span>
+                </template>
             </nav>
         </div>
     </header>
 </template>
+
+<i18n>
+    ko:
+        login: '로그인'
+</i18n>
 
 <style scoped>
     .AppNavbar {
@@ -57,14 +69,54 @@
         &__content {
             display: flex;
             justify-content: space-between;
-            padding: 15px 30px;
+            align-items: center;
+            padding: 0 50px;
+
+            & > * {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+        }
+
+        &__branding {
+            &--active {
+                cursor: default;
+            }
         }
 
         &__items {
             display: flex;
+            align-self: stretch;
+            align-items: stretch;
+            padding: 0;
+        }
+
+        &__item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--grey-200);
+            font-family: var(--theme-font);
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: background .4s ease;
+
+            &--button {
+                cursor: pointer;
+
+                &:hover {
+                    background: rgba(var(--grey-800_w), .75);
+                }
+            }
         }
 
         &__logo {
+            width: 154px;
             height: 40px;
         }
     }
@@ -84,11 +136,29 @@
 </style>
 
 <script>
+    import api from "@/src/api";
+
     import SparcsLogo from "@/images/SparcsLogo?inline";
 
     export default {
+        computed: {
+            name() {
+                if(!this.$store.state.user)
+                    return null;
+                
+                return this.$store.state.user.name;
+            }
+        },
+
         props: {
             background: Boolean
+        },
+
+        methods: {
+            async login() {
+                const { url } = await api('/auth', 'post');
+                location.href = url;
+            }
         },
 
         components: {

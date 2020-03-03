@@ -1,11 +1,11 @@
 const adminRequired = require('../middlewares/adminRequired');
 const createAsyncRouter = require('@khinenw/express-async-router');
 
+const { Options } = require('../schema');
+
 const router = createAsyncRouter();
 router.get('/available', async (req, res) => {
-    const recruitingInfo = await req.db
-        .collection('options')
-        .findOne({ key: 'recruiting-info' });
+    const recruitingInfo = await Options.findOne({ key: 'recruiting-info' });
 
     const isAvailable = recruitingInfo ? recruitingInfo.value : false;
 
@@ -15,16 +15,15 @@ router.get('/available', async (req, res) => {
     });
 });
 
-router.post('/available', adminRequired, async ctx => {
+router.post('/available', adminRequired, async (req, res) => {
     const available = !!req.body.available;
 
-    await req.db
-        .collection('options')
+    await Options
         .findOneAndUpdate(
             { key: 'recruiting-info' },
             {
                 key: 'recruiting-info',
-                value:
+                value: available
             },
             { upsert: true }
         );

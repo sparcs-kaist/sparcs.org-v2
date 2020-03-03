@@ -8,7 +8,7 @@
                 {{ $t('recruiting-desc') }}
             </p>
             <div class="Section__links">
-                <app-link to="https://apply.sparcs.org" :disabled="!recruitingEnabled"
+                <AppLink to="https://apply.sparcs.org" :disabled="!recruitingEnabled"
                     class="Section__link Section__link--primary">
 
                     <template v-if="recruitingEnabled">
@@ -17,7 +17,7 @@
                     <template v-else>
                         {{ $t('recruiting-disabled') }}
                     </template>
-                </app-link>
+                </AppLink>
             </div>
         </div>
 
@@ -27,9 +27,9 @@
                 {{ $t('members-desc') }}
             </p>
             <div class="Section__links">
-                <app-link to="/members" class="Section__link">
+                <AppLink to="/members" class="Section__link">
                     {{ $t('members-link') }}
-                </app-link>
+                </AppLink>
             </div>
         </div>
     </section>
@@ -85,6 +85,8 @@
 </style>
 
 <script>
+    import api from "@/src/api";
+
     import AppLink from "@/components/AppLink";
 
     export default {
@@ -92,6 +94,11 @@
             return {
                 recruitingEnabled: false
             };
+        },
+
+        async created() {
+            const { available } = await api('/recruiting/available');
+            this.recruitingEnabled = available;
         },
 
         components: {

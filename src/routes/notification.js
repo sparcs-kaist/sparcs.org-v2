@@ -3,15 +3,14 @@ const createAsyncRouter = require('@khinenw/express-async-router');
 const createError = require('../utils/createError');
 const router = createAsyncRouter();
 
-const { ObjectId } = require('mongodb');
+const { Notifications } = require('../schema');
 
 router.get('/', async (req, res) => {
-    const notifications = await req.db
-        .collection('notifications')
-        .find({})
-        .toArray();
-
-    res.json(notification);
+    const notifications = await Notifications.find({}).exec();
+    res.json({
+        ok: true,
+        notifications
+    });
 });
 
 router.post('/', adminRequired, async (req, res) => {
@@ -33,9 +32,8 @@ router.post('/', adminRequired, async (req, res) => {
         notification.level = 0;
     }
 
-    await req.db
-        .collection('notifications')
-        .insertOne(notification);
+    const tuple = new Notifications(notification);
+    await tuple.save();
 
     res.json({
         ok: true
@@ -43,10 +41,9 @@ router.post('/', adminRequired, async (req, res) => {
 });
 
 router.delete('/:id([a-z0-9]{24})', adminRequired, async (req, res) => {
-    await req.db
-        .collection('notifications')
+    await Notifications
         .deleteOne({
-            _id: ObjectId(req.params.id)
+            _id: req.params.id
         });
 
     res.json({

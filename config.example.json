@@ -1,3 +1,10 @@
 {
-    "memversUrl": "https://memvers-api.sparcs.org"
+    "memversUrl": "https://memvers-api.sparcs.org",
+    "mongoUrl": "mongodb://localhost:27017/sparcs-home",
+    "secret": "bunch-of-random-string",
+    "jwtMode": "RS256",
+    "privateKey": "your-private-key.pem",
+    "ssoClient": "your-sso-client-id",
+    "ssoSecret": "your-sso-secret",
+    "tokenExpiresIn": 7200
 }

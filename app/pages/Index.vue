@@ -38,12 +38,26 @@
 </style>
 
 <script>
+    import api from "@/src/api";
+    import store from "@/src/store";
+
     import TheActivities from "@/components/TheActivities";
     import TheLanding from "@/components/TheLanding";
     import TheMembers from "@/components/TheMembers";
     import TheServices from "@/components/TheServices";
 
     export default {
+        async beforeRouteEnter(route, from, next) {
+            const { code, state } = route.query;
+
+            if(code && state) {
+                await store.dispatch('finalizeAuth', { code, state });
+                return next('/');
+            }
+
+            next();
+        },
+
         components: {
             TheActivities,
             TheLanding,

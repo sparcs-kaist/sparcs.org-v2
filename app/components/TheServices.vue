@@ -120,6 +120,15 @@
             margin-top: 10px;
         }
 
+        &__link {
+            height: 1.4rem;
+            vertical-align: middle;
+            
+            &__icon {
+                stroke: none !important;
+            }
+        }
+
         &__tags {
             display: flex;
             flex-direction: column;

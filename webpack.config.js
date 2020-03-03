@@ -13,6 +13,10 @@ const babelLoader = {
     options: {
         presets: [
             ['@babel/preset-env', { targets: 'last 4 versions' }]
+        ],
+
+        plugins: [
+            '@babel/plugin-transform-runtime'
         ]
     }
 };
@@ -100,7 +104,15 @@ module.exports = {
                     {
                         resourceQuery: /inline/,
                         use: [
-                            babelLoader,
+                            {
+                                loader: 'babel-loader',
+
+                                options: {
+                                    presets: [
+                                        ['@babel/preset-env', { targets: 'last 4 versions' }]
+                                    ]
+                                }
+                            },
                             {
                                 loader: 'vue-svg-loader',
                                 options: {
