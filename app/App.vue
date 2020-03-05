@@ -12,20 +12,42 @@
 
 <style scoped>
     .App {
-        & >>> &__page {
-            width: 100%;
-            max-width: 900px;
-            box-sizing: border-box;
-            padding: 0 30px;
-            margin: 0 auto;
-            margin-top: 100px;
-        }
+        & >>> & {
+            &__back {
+                display: inline-flex;
+                align-items: center;
+                color: var(--grey-200);
+                font-family: var(--theme-font);
+                text-decoration: none;
 
-        & >>> &__title {
-            margin-left: -15px;
-            font-family: var(--title-font);
-            font-weight: 700;
-            font-size: 2.3rem;
+                &__icon {
+                    margin-left: -15px;
+                    width: 1.6rem;
+                    height: .8rem;
+                    stroke: var(--grey-200);
+                    transition: transform .4s ease;
+                }
+
+                &:hover .App__back__icon {
+                    transform: translateX(-5px);
+                }
+            }
+
+            &__page {
+                width: 100%;
+                max-width: 900px;
+                box-sizing: border-box;
+                padding: 0 30px;
+                margin: 0 auto;
+                margin-top: 100px;
+            }
+
+            &__title {
+               margin-left: -15px;
+               font-family: var(--title-font);
+               font-weight: 700;
+               font-size: 2.3rem;
+           }
         }
     }
 </style>
@@ -57,12 +79,12 @@
         --theme-400_w: 236, 143, 038;
         --theme-500_w: 235, 160, 042;
         --theme-900_w: 248, 222, 182;
-        --theme-foreground-200_w: 034, 034, 034;
+        --theme-foreground-200_w: 052, 029, 004;
         --theme-foreground-900_w: 255, 255, 255;
         --theme-400: rgb(var(--theme-400_w)); /* #ec8f26 */
         --theme-500: rgb(var(--theme-500_w)); /* #eba02a */
         --theme-900: rgb(var(--theme-900_w)); /* #f8deb6 */
-        --theme-foreground-200: rgb(var(--theme-foreground-200_w)); /* #222222 */
+        --theme-foreground-200: rgb(var(--theme-foreground-200_w)); /* #341d04 */
         --theme-foreground-900: rgb(var(--theme-foreground-900_w)); /* #ffffff */
 
         --grey-900_w: 255, 255, 255;
@@ -72,6 +94,7 @@
         --grey-750_w: 225, 225, 225;
         --grey-650_w: 161, 161, 161;
         --grey-600_w: 138, 138, 138;
+        --grey-300_w: 050, 050, 050;
         --grey-200_w: 034, 034, 034;
         --grey-100_w: 016, 016, 016;
         --grey-000_w: 000, 000, 000;
@@ -82,6 +105,7 @@
         --grey-750: rgb(var(--grey-750_w)); /* #e1e1e1 */
         --grey-650: rgb(var(--grey-650_w)); /* #a1a1a1 */
         --grey-600: rgb(var(--grey-600_w)); /* #959595 */
+        --grey-300: rgb(var(--grey-300_w)); /* #323232 */
         --grey-200: rgb(var(--grey-200_w)); /* #222222 */
         --grey-100: rgb(var(--grey-100_w)); /* #101010 */
         --grey-000: rgb(var(--grey-000_w)); /* #000000 */

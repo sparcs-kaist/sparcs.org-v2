@@ -8,6 +8,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "start": "node src/index",
     "dev": "webpack-dev-server",
+    "dev:external": "webpack-dev-server --host 0.0.0.0 --disable-host-check",
     "watch": "webpack --watch"
   },
   "repository": {

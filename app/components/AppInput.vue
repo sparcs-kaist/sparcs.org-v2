@@ -23,6 +23,8 @@
             color: var(--grey-200);
             font-family: var(--theme-font);
             font-size: .9rem;
+            box-sizing: border-box;
+            width: 100%;
             outline: none;
         }
     }

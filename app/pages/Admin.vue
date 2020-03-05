@@ -30,10 +30,9 @@
                 </div>
 
                 <div class="Section__row">
-                    <label>
-                        <input type="checkbox" name="raw">
+                    <AppCheckbox name="raw">
                         {{ $t('raw') }}
-                    </label>
+                    </AppCheckbox>
                 </div>
             </AppForm>
         </section>
@@ -44,16 +43,16 @@
                 @submit="notify($t('set-recruiting'), $event)">
 
                 <div class="Section__row">
-                    <label>
-                        <input type="checkbox" name="available">
+                    <AppCheckbox name="available">
                         {{ $t('is-recruiting') }}
-                    </label>
+                    </AppCheckbox>
                 </div>
             </AppForm>
         </section>
 
         <section class="Admin__section Section">
-            <h2 class="Section__title"> {{ $t('attributes') }} </h2>
+            <h2 class="Section__title"> {{ $t('members') }} </h2>
+            <h3 class="Section__title"> {{ $t('attributes') }} </h3>
             <div class="Admin__attributes" v-for="attribute in attributes" :key="attribute.id">
                 <div class="Attribute">
                     <span class="Attribute__id"> {{ attribute.id }} </span>
@@ -81,15 +80,23 @@
                 </div>
 
                 <div class="Section__row">
-                    <label>
-                        <input type="checkbox" name="admin">
+                    <AppCheckbox name="admin">
                         {{ $t('admin') }}
-                    </label>
+                    </AppCheckbox>
 
-                    <label>
-                        <input type="checkbox" name="ignore">
+                    <AppCheckbox name="ignore">
                         {{ $t('ignore') }}
-                    </label>
+                    </AppCheckbox>
+                </div>
+            </AppForm>
+
+            <h3 class="Section__title"> {{ $t('refresh-member') }} </h3>
+            <AppForm class="Section__form" action="/member/refresh" method="post"
+                @submit="notify($t('refresh-member'), $event)">
+
+                <div class="Section__row">
+                    <AppInput name="ldapId" :placeholder="$t('ldap-id')" />
+                    <AppInput name="ldapPw" type="password" :placeholder="$t('ldap-pw')" />
                 </div>
             </AppForm>
         </section>
@@ -113,6 +120,7 @@
         alert-1: '조금 수수한 알림'
         alert-2: '조금 화려한 알림'
         alert-3: '화려한 알림'
+        members: '사용자 설정'
         set-recruiting: '리크루팅 기간으로 설정'
         is-recruiting: '리크루팅 중입니다.'
         attributes: '사용자 어트리뷰트'
@@ -121,6 +129,10 @@
         admin: '관리자'
         ignore: '목록에서 표시하지 않음'
         delete-attributes: '어트리뷰트 삭제'
+        refresh-member: '사용자 목록 새로고침'
+        refresh: '새로고침'
+        ldap-id: 'LDAP 아이디'
+        ldap-pw: 'LDAP 비밀번호'
 </i18n>
 
 <style scoped>
@@ -138,6 +150,10 @@
         &__title {
             font-family: var(--title-font);
             font-size: 1.6rem;
+        }
+
+        h3&__title {
+            font-size: 1.4rem;
         }
 
         &__row {
@@ -179,6 +195,7 @@
 <script>
     import api from "@/src/api";
 
+    import AppCheckbox from "@/components/AppCheckbox";
     import AppForm from "@/components/AppForm";
     import AppInput from "@/components/AppInput";
     import AppLink from "@/components/AppLink";
@@ -230,6 +247,11 @@
                 const result = await api(`/member/attribute/${id}`, 'delete');
                 await this.fetchAttribute();
                 this.notify(this.$t('delete-attributes'), result);
+            },
+
+            async refresh() {
+                const result = await api('/member/refresh', 'post');
+                this.notify(this.$t('refresh-member'), result);
             }
         },
 
@@ -238,6 +260,7 @@
         },
 
         components: {
+            AppCheckbox,
             AppForm,
             AppInput,
             AppLink
