@@ -6,8 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "start": "cross-env NODE_ENV=production node src/index",
-    "start:dev": "node src/index",
+    "start": "node src/index",
     "dev": "webpack-dev-server",
     "dev:external": "webpack-dev-server --host 0.0.0.0 --disable-host-check",
     "watch": "webpack --watch"
