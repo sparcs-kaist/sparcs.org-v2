@@ -92,6 +92,7 @@
         --grey-800_w: 241, 241, 241;
         --grey-780_w: 234, 234, 234;
         --grey-750_w: 225, 225, 225;
+        --grey-700_w: 192, 192, 192;
         --grey-650_w: 161, 161, 161;
         --grey-600_w: 138, 138, 138;
         --grey-300_w: 050, 050, 050;
@@ -103,6 +104,7 @@
         --grey-800: rgb(var(--grey-800_w)); /* #f1f1f1 */
         --grey-780: rgb(var(--grey-780_w)); /* #eaeaea */
         --grey-750: rgb(var(--grey-750_w)); /* #e1e1e1 */
+        --grey-700: rgb(var(--grey-700_w)); /* #c0c0c0 */
         --grey-650: rgb(var(--grey-650_w)); /* #a1a1a1 */
         --grey-600: rgb(var(--grey-600_w)); /* #959595 */
         --grey-300: rgb(var(--grey-300_w)); /* #323232 */

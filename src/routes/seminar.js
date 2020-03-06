@@ -1,12 +1,25 @@
 const aws = require('aws-sdk');
 const config = require('../../config.json');
 const createAsyncRouter = require('@khinenw/express-async-router');
+const createError = require('../utils/createError');
 const sparcsRequired = require('../middlewares/sparcsRequired');
 const upload = require('../middlewares/upload');
 
-const { Seminar } = require('../schema');
+const { Seminars } = require('../schema');
 
 const router = createAsyncRouter();
+router.get('/', async (req, res) => {
+    const seminars = await Seminars
+        .find({})
+        .sort({ date: -1 })
+        .exec();
+
+    res.json({
+        ok: true,
+        seminars
+    });
+});
+
 router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) => {
     const { title, speaker, date } = req.body;
     const seminar = {};

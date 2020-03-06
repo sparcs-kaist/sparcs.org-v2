@@ -363,11 +363,6 @@
             });
         },
 
-        async mounted() {
-            const { members } = await api('/member');
-            this.members = members;
-        },
-
         components: {
             AppCheckbox,
             AppInput,

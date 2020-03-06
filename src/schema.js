@@ -23,6 +23,7 @@ const seminarSchema = new Schema({
     date: Date,
     sources: [String]
 });
+seminarSchema.index({ date: -1 });
 
 const memberSchema = new Schema({
     id: { type: String, unique: true, lowercase: true },
@@ -50,11 +51,13 @@ const memberAttrSchema = new Schema({
     admin: Boolean,
     ignore: Boolean
 });
+memberAttrSchema.index({ id: 1 });
 
 const optionsSchema = new Schema({
     key: { type: String, unique: true },
     value: String
 });
+optionsSchema.index({ key: 1 });
 
 exports.Years = mongoose.model('Years', yearSchema);
 exports.Albums = mongoose.model('Albums', albumSchema);

@@ -117,7 +117,7 @@
                     ],
 
                     [
-                        { name: 'seminar', link: '/seminar' },
+                        { name: 'seminar', link: '/seminars' },
                         { name: 'project' },
                     ]
                 ]
