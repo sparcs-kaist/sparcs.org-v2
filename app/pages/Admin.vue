@@ -1,11 +1,5 @@
 <template>
     <div class="Admin App__page">
-        <transition-group class="Admin__toasts" name="Fade" tag="div">
-            <div class="Toast" v-for="toast in toasts" :class="toast.class" :key="toast.id">{{
-                toast.text
-            }}</div>
-        </transition-group>
-
         <h1 class="App__title"> {{ $t('admin-page') }} </h1>
         <section class="Admin__section Section">
             <h2 class="Section__title"> {{ $t('add-notification') }} </h2>
@@ -105,11 +99,6 @@
 
 <i18n>
     ko:
-        success: '{name} 성공!'
-        fail: >
-            {name} 실패 ㅠㅠ
-
-            이유: {reason}
         admin-page: '관리자 페이지'
         notification: '공지'
         add-notification: '공지 추가'
@@ -165,31 +154,6 @@
             white-space: pre-line;
         }
     }
-
-    .Admin {
-        &__toasts {
-            position: fixed;
-            top: 100px;
-            right: 50px;
-        }
-    }
-
-    .Toast {
-        font-family: var(--theme-font);
-        color: var(--alert-foreground-900);
-        padding: 10px 20px;
-        border-radius: 5px;
-        white-space: pre-line;
-        margin-top: 10px;
-
-        &--success {
-            background: var(--alert-success);
-        }
-
-        &--fail {
-            background: var(--alert-level-2);
-        }
-    }
 </style>
 
 <script>
@@ -203,34 +167,13 @@
     export default {
         data() {
             return {
-                attributes: [],
-                toasts: []
+                attributes: []
             };
         },
 
         methods: {
             notify(name, result) {
-                const id = Math.random().toString(36).slice(2);
-
-                if(result.ok) {
-                    this.toasts.push({
-                        id,
-                        text: this.$t('success', { name }),
-                        class: 'Toast--success'
-                    });
-                } else {
-                    this.toasts.push({
-                        id,
-                        text: this.$t('fail', { name, reason: result.reason }),
-                        class: 'Toast--fail'
-                    });
-                }
-
-                setTimeout(() => {
-                    const index = this.toasts.findIndex(toast => toast.id === id);
-                    if(index >= 0)
-                        this.toasts.splice(index, 1);
-                }, 3000);
+                this.$store.dispatch('toast/addToastFromApi', { name, result });
             },
 
             async fetchAttribute() {

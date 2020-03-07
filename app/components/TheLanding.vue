@@ -278,10 +278,10 @@
 
         computed: {
             admin() {
-                if(!this.$store.state.user)
+                if(!this.$store.state.auth.user)
                     return false;
 
-                return this.$store.state.user.admin;
+                return this.$store.state.auth.user.admin;
             },
 
             manyNotifications() {

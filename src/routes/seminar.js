@@ -1,9 +1,9 @@
-const aws = require('aws-sdk');
+const adminRequired = require('../middlewares/adminRequired');
 const config = require('../../config.json');
 const createAsyncRouter = require('@khinenw/express-async-router');
 const createError = require('../utils/createError');
 const sparcsRequired = require('../middlewares/sparcsRequired');
-const upload = require('../middlewares/upload');
+const { upload } = require('../middlewares/upload');
 
 const { Seminars } = require('../schema');
 
@@ -37,9 +37,9 @@ router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) =
     }
 
     if(typeof date !== 'number') {
-        seminar.date = Date.now();
+        seminar.date = new Date();
     } else {
-        seminar.date = date;
+        seminar.date = new Date(date);
     }
 
     const sources = req.files.map(({ location }) => location);
@@ -47,6 +47,10 @@ router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) =
 
     const tuple = new Seminars(seminar);
     await tuple.save();
+});
+
+router.delete('/:id([a-z0-9]{24})', adminRequired, async (req, res) => {
+
 });
 
 module.exports = router;

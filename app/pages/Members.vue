@@ -313,7 +313,7 @@
             },
 
             authState() {
-                return this.$store.getters.authState;
+                return this.$store.getters['auth/authState'];
             }
         },
 

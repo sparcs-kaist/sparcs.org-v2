@@ -51,7 +51,7 @@
             const { code, state } = route.query;
 
             if(code && state) {
-                await store.dispatch('finalizeAuth', { code, state });
+                await store.dispatch('auth/finalizeAuth', { code, state });
                 return next('/');
             }
 

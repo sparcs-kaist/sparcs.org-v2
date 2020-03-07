@@ -18,5 +18,22 @@ export default new VueRouter({
         { name: 'NotFound', path: '*', component: NotFound }
     ],
 
-    mode: 'history'
+    mode: 'history',
+
+    async scrollBehavior (to, from, savedPosition) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if(to.hash) {
+            return {
+                selector: to.hash,
+                offset: { y: 50 }
+            };
+        }
+
+        if(savedPosition) {
+            return savedPosition
+        } else {
+            return { x: 0, y: 0 }
+        }
+    }
 });

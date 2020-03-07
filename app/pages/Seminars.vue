@@ -14,6 +14,20 @@
         <div class="Seminars__criteria">
             <div class="Seminars__query">
                 <AppInput v-model="query" bind :placeholder="$t('search')" />
+                <div class="Seminars__sorting">
+                    <label class="Seminars__sorting-button">
+                        <input class="Seminars__sorting-input" type="radio" value="date" v-model="sortMode">
+                        <IconSortDate class="Seminars__sorting-icon" />
+                    </label>
+
+                    <label class="Seminars__sorting-button">
+                        <input class="Seminars__sorting-input" type="radio" value="title" v-model="sortMode">
+                        <IconSortTitle class="Seminars__sorting-icon" />
+                    </label>
+                    <AppCheckbox class="Seminars__sorting-reverse" v-model="sortReverse" bind>
+                        {{ $t('reverse') }}
+                    </AppCheckbox>
+                </div>
             </div>
 
             <div class="Seminars__years">
@@ -34,12 +48,16 @@
                     <span class="Seminar__date"> at {{ stringifyDate(seminar.date) }} </span>
                 </div>
                 <div class="Seminar__files">
-                    <a class="Seminar__file" v-for="source in seminar.sources" :href="source">
+                    <a class="Seminar__file" v-for="source in seminar.sources" :href="source"
+                        target="_blank" rel="noopener">
+
                         {{ getFileName(source) }}
                     </a>
                 </div>
             </div>
         </div>
+
+        <TheSeminarUpload v-if="authState" />
     </div>
 </template>
 
@@ -48,6 +66,7 @@
         search: '검색'
         go-back: '뒤로가기'
         desc: '스팍스에서 진행되었던 세미나의 발표자료입니다.'
+        reverse: '역순'
 </i18n>
 
 <style scoped>
@@ -65,7 +84,8 @@
 
         &__year {
             cursor: pointer;
-            background: var(--grey-800);
+            /* background: var(--grey-800); */
+            background: transparent;
             border: none;
             border-radius: 5px;
             font-size: 1.05rem;
@@ -91,7 +111,51 @@
         }
 
         &__query {
-            max-width: 300px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        &__sorting {
+            display: flex;
+            margin: 10px;
+            align-items: center;
+        }
+
+        &__sorting-button {
+            cursor: pointer;
+        }
+
+        &__sorting-icon {
+            width: 2rem;
+            height: 2rem;
+            padding: .25rem;
+            margin: 0 5px;
+            background: var(--grey-800);
+            fill: var(--grey-200);
+            border-radius: 5px;
+            transition: all .4s ease;
+
+            &:hover {
+                background: var(--grey-780);
+            }
+        }
+
+        &__sorting-input {
+            display: none;
+        }
+
+        &__sorting-input:checked + &__sorting-icon {
+            background: var(--theme-500);
+            fill: var(--theme-foreground-900);
+
+            &:hover {
+                background: var(--theme-500);
+            }
+        }
+
+        &__sorting-reverse {
+            margin-left: 10px;
         }
     }
 
@@ -147,9 +211,14 @@
 
 <script>
     import api from "@/src/api";
+    import formatDate from "@/src/formatDate";
 
+    import AppCheckbox from "@/components/AppCheckbox";
     import AppInput from "@/components/AppInput";
     import IconArrow from "@/images/IconArrow?inline";
+    import IconSortDate from "@/images/IconSortDate?inline";
+    import IconSortTitle from "@/images/IconSortTitle?inline";
+    import TheSeminarUpload from "@/components/TheSeminarUpload";
 
     export default {
         data() {
@@ -175,7 +244,7 @@
 
                     case 'title':
                         sorted = this.seminars.sort(
-                            (v1, v2) => v1.title.localeCompare(v2.title)
+                            (v1, v2) => v2.title.localeCompare(v1.title)
                         );
                         break;
 
@@ -232,6 +301,10 @@
                 return [...Array(this.yearEnd - this.yearStart + 1)]
                     .map((_, i) => i + this.yearStart)
                     .reverse();
+            },
+
+            authState() {
+                return this.$store.getters['auth/authState'];
             }
         },
 
@@ -241,14 +314,7 @@
             },
 
             stringifyDate(date) {
-                const dateObj = new Date(date);
-                let month = `${dateObj.getMonth() + 1}`;
-                let day = `${dateObj.getDate()}`;
-
-                month = month.length < 2 ? `0${month}` : month;
-                day = day.length < 2 ? `0${day}` : day;
-
-                return `${dateObj.getFullYear()}-${month}-${day}`;
+                return formatDate(date);
             }
         },
 
@@ -276,8 +342,12 @@
         },
 
         components: {
+            AppCheckbox,
             AppInput,
-            IconArrow
+            IconArrow,
+            IconSortDate,
+            IconSortTitle,
+            TheSeminarUpload
         }
     };
 </script>

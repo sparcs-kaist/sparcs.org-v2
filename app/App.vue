@@ -1,9 +1,11 @@
 <template>
     <div class="App">
-        <AppNavbar :background="scroll > 0" />
+        <TheToasts />
+
+        <TheNavbar :background="navBackground" />
 
         <transition name="Fade" mode="out-in">
-            <router-view />
+            <router-view class="App__view" />
         </transition>
 
         <TheFooter />
@@ -48,6 +50,17 @@
                font-weight: 700;
                font-size: 2.3rem;
            }
+        }
+
+        &__view {
+            min-height: 100vh;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .App {
+            /* Due to Navbar */
+            padding-bottom: 80px;
         }
     }
 </style>
@@ -147,8 +160,9 @@
 </style>
 
 <script>
-    import AppNavbar from "@/components/AppNavbar";
     import TheFooter from "@/components/TheFooter";
+    import TheNavbar from "@/components/TheNavbar";
+    import TheToasts from "@/components/TheToasts";
 
     export default {
         data() {
@@ -156,6 +170,12 @@
                 innerHeight: window.innerHeight,
                 scroll: window.scrollY
             };
+        },
+
+        computed: {
+            navBackground() {
+                return this.scroll > 0;
+            }
         },
 
         mounted() {
@@ -183,8 +203,9 @@
         },
 
         components: {
-            AppNavbar,
-            TheFooter
+            TheFooter,
+            TheNavbar,
+            TheToasts
         }
     };
 </script>

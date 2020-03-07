@@ -1,0 +1,4 @@
+{
+    "success": "{name} 성공!",
+    "fail": "{name} 실패 ㅠㅠ\n이유: {reason}"
+}

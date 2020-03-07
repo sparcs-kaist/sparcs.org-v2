@@ -6,8 +6,8 @@ import store from "@/src/store";
 import router from "@/src/router";
 
 (async () => {
-    await store.dispatch('init');
-    
+    await store.dispatch('auth/init');
+
     new Vue({
         el: '#App',
         i18n,

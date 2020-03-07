@@ -23,11 +23,15 @@ const upload = multer({
             cb(null, {fieldName: file.fieldname});
         },
         key: function (req, file, cb) {
+            const extension = path.extname(file.originalname);
             const { speaker } = req.body;
-            const fileName = `${speaker}_${Date.now()}.pdf`;
+            const fileName = `${speaker}_${Date.now()}.${extension}`;
             cb(null, fileName);
         },
     })
 });
 
-module.exports = upload;
+module.exports = {
+    upload,
+    s3
+};
