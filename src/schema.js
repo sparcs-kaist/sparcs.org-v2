@@ -21,7 +21,14 @@ const seminarSchema = new Schema({
     title: String,
     speaker: String,
     date: Date,
-    sources: [String]
+    sources: [{
+        sourceType: {
+            type: String,
+            enum: ['S3', 'Link']
+        },
+        name: String,
+        url: String
+    }]
 });
 seminarSchema.index({ date: -1 });
 

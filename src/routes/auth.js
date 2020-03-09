@@ -61,7 +61,6 @@ router.post('/finalize', async (req, res) => {
     try {
         cookie = await encryptedCookie.parse(req.cookies.PHPSESSID);
     } catch(err) {
-        console.log(err);
         return createError(400, 'authentication-not-started');
     }
 

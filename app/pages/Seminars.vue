@@ -46,12 +46,18 @@
                     <span class="Seminar__speaker"> by {{ seminar.speaker }} </span>
                     /
                     <span class="Seminar__date"> at {{ stringifyDate(seminar.date) }} </span>
+                    <template v-if="admin">
+                        /
+                        <span class="Seminar__id">
+                            {{ seminar._id }}
+                        </span>
+                    </template>
                 </div>
                 <div class="Seminar__files">
-                    <a class="Seminar__file" v-for="source in seminar.sources" :href="source"
+                    <a class="Seminar__file" v-for="source in seminar.sources" :href="source.url"
                         target="_blank" rel="noopener">
 
-                        {{ getFileName(source) }}
+                        {{ source.name }}
                     </a>
                 </div>
             </div>
@@ -232,6 +238,13 @@
         },
 
         computed: {
+            admin() {
+                if(!this.$store.state.auth.user)
+                    return false;
+
+                return this.$store.state.auth.user.admin;
+            },
+
             seminarsSorted() {
                 let sorted;
 
@@ -269,7 +282,7 @@
                         (seminar.title || '').toLowerCase().includes(lowerCaseQuery) ||
                         (seminar.speaker || '').toLowerCase().includes(lowerCaseQuery) ||
                         seminar.sources.some(source => {
-                            return source.toLowerCase().includes(lowerCaseQuery);
+                            return source.name.toLowerCase().includes(lowerCaseQuery);
                         })
                     );
                 });
@@ -309,10 +322,6 @@
         },
 
         methods: {
-            getFileName(source) {
-                return source.split('/').pop();
-            },
-
             stringifyDate(date) {
                 return formatDate(date);
             }

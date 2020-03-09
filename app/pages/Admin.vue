@@ -94,6 +94,17 @@
                 </div>
             </AppForm>
         </section>
+
+        <section class="Admin__section Section">
+            <h2 class="Section__title"> {{ $t('delete-seminar') }} </h2>
+            <div class="Section__row">
+                <AppInput v-model="seminarId" :placeholder="$t('seminar-id')" bind/>
+
+                <AppLink class="Section__submit" button @click="deleteSeminar">
+                    {{ $t('delete-seminar') }}
+                </AppLink>
+            </div>
+        </section>
     </div>
 </template>
 
@@ -122,6 +133,8 @@
         refresh: '새로고침'
         ldap-id: 'LDAP 아이디'
         ldap-pw: 'LDAP 비밀번호'
+        delete-seminar: '세미나 삭제'
+        seminar-id: '세미나 ID'
 </i18n>
 
 <style scoped>
@@ -147,6 +160,7 @@
 
         &__row {
             display: flex;
+            align-items: center;
             margin-top: 10px;
         }
 
@@ -167,7 +181,8 @@
     export default {
         data() {
             return {
-                attributes: []
+                attributes: [],
+                seminarId: ''
             };
         },
 
@@ -195,6 +210,11 @@
             async refresh() {
                 const result = await api('/member/refresh', 'post');
                 this.notify(this.$t('refresh-member'), result);
+            },
+
+            async deleteSeminar() {
+                const result = await api(`/seminar/${this.seminarId}`, 'delete');
+                await this.notify(this.$t('delete-seminar'), result);
             }
         },
 

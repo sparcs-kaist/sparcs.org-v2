@@ -1,8 +1,8 @@
 <template>
-    <form class="SeminarUpload" @submit.prevent="upload">
+    <form class="SeminarUpload" @submit.prevent>
         <h1 class="SeminarUpload__title"> {{ $t('seminar-upload') }} </h1>
-        <div class="SeminarUpload__row SeminarUpload__row--fill">
-            <AppInput v-model="title" :placeholder="$t('title')" bind />
+        <div class="SeminarUpload__row">
+            <AppInput class="SeminarUpload__fill" v-model="title" :placeholder="$t('title')" bind />
         </div>
 
         <div class="SeminarUpload__row">
@@ -14,7 +14,7 @@
         <transition-group name="FadeMove" class="SeminarUpload__files" tag="div">
             <div class="SeminarUpload__file File" v-for="file in files" :key="file.id">
                 <span class="File__title"> {{ file.name }} </span>
-                <button @click="deleteFile(file.id)" class="File__delete"> {{ $t('delete') }} </button>
+                <button type="button" @click="deleteFile(file.id)" class="File__delete"> {{ $t('delete') }} </button>
             </div>
         </transition-group>
 
@@ -25,8 +25,25 @@
             </label>
         </div>
 
+        <h2 class="SeminarUpload__hint"> {{ $t('add-links') }} </h2>
+        <transition-group name="FadeMove" class="SeminarUpload__files" tag="div">
+            <div class="SeminarUpload__file File" v-for="link in links" :key="link.id">
+                <span class="File__title"> {{ link.name }} </span>
+                <button type="button" @click="deleteLink(link.id)" class="File__delete"> {{ $t('delete') }} </button>
+            </div>
+        </transition-group>
+
+        <div class="SeminarUpload__row">
+            <AppInput v-model="linkName" :placeholder="$t('link-name')" bind />
+            <AppInput class="SeminarUpload__fill" v-model="linkUrl" :placeholder="$t('link-url')" bind />
+            <AppLink button @click="addLink">
+                {{ $t('add-link') }}
+            </AppLink>
+        </div>
+
+        <h2 class="SeminarUpload__hint"> {{ $t('submit') }} </h2>
         <div class="SeminarUpload__row SeminarUpload__submit-row">
-            <AppLink button submit>
+            <AppLink button @click="upload">
                 {{ $t('submit') }}
             </AppLink>
         </div>
@@ -50,6 +67,10 @@
         delete: '삭제'
         submit: '업로드'
         uploading: '업로드 중입니다...'
+        add-links: '링크 추가'
+        add-link: '링크 추가'
+        link-name: '링크 이름'
+        link-url: 'https://'
 </i18n>
 
 <style scoped>
@@ -69,13 +90,13 @@
             margin-bottom: 10px;
         }
 
+        &__fill {
+            flex: 1;
+        }
+
         &__row {
             display: flex;
             margin: 5px 0;
-
-            &--fill > * {
-                flex: 1;
-            }
 
             & > * {
                 margin: 5px;
@@ -116,7 +137,7 @@
         }
 
         &__submit-row {
-            justify-content: flex-end;
+            /* justify-content: flex-end; */
         }
 
         &__status {
@@ -170,6 +191,7 @@
 </style>
 
 <script>
+    import api from "@/src/api";
     import formatDate from "@/src/formatDate";
 
     import AppInput from "@/components/AppInput";
@@ -182,6 +204,9 @@
                 speaker: '',
                 date: formatDate(new Date()),
                 files: [],
+                linkName: '',
+                linkUrl: '',
+                links: [],
                 uploading: false,
                 progress: 0
             };
@@ -202,6 +227,18 @@
                 this.files = this.files.filter(v => v.id !== id);
             },
 
+            addLink() {
+                this.links.push({
+                    id: Math.random().toString(36).slice(2),
+                    name: this.linkName,
+                    url: this.linkUrl
+                });
+            },
+
+            deleteLink(id) {
+                this.links = this.links.filter(v => v.id !== id);
+            },
+
             async upload() {
                 const options = {
                     onUploadProgress: e => {
@@ -209,25 +246,36 @@
                     }
                 };
 
+                const linksEncoded = this.links.reduce((prev, curr) => {
+                    prev[curr.name] = curr.url;
+                    return prev;
+                }, {});
+
                 const formData = new FormData();
                 formData.append('title', this.title);
                 formData.append('speaker', this.speaker);
-                formData.append('files', this.files);
                 formData.append('date', new Date(this.date).getTime());
+                formData.append('links', JSON.stringify(linksEncoded));
+                this.files.forEach(file => {
+                    formData.append('content', file);
+                });
 
                 this.uploading = true;
                 this.progress = 0;
 
-                const result = await this.api('/seminar', 'post', formData, options);
-                this.$store.dispatch('toast/addToast', {
+                const result = await api('/seminar', 'post', formData, options);
+                this.$store.dispatch('toast/addToastFromApi', {
                     result,
-                    name: $t('seminar-upload')
+                    name: this.$t('seminar-upload')
                 });
 
                 this.uploading = false;
                 this.files = [];
+                this.links = [];
                 this.title = '';
                 this.speaker = '';
+                this.linkName = '';
+                this.linkUrl = '';
             }
         },
 
