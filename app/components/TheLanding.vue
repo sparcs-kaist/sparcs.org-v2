@@ -6,7 +6,11 @@
                 v-for="notification in notifications">
 
                 <h2 class="Notification__title"> {{ notification.title }} </h2>
-                <p class="Notification__content" v-if="notification.raw" v-html="notification.content"></p>
+
+                <p class="Notification__content Notification__content--raw"
+                    v-html="notification.content"
+                    v-if="notification.raw">
+                </p>
                 <p class="Notification__content" v-else>{{ notification.content }}</p>
 
                 <AppLink class="Notification__delete" v-if="admin" button
@@ -80,6 +84,18 @@
         &__content {
             margin-bottom: 0;
             white-space: pre-line;
+
+            &--raw {
+                white-space: normal;
+
+                a {
+                    color: inherit;
+
+                    &:hover {
+                        background: rgba(var(--grey-050_w), 0.2);
+                    }
+                }
+            }
         }
 
         &__delete {

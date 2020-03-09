@@ -132,6 +132,8 @@
         background: var(--grey-800);
         padding: 15px 30px;
         box-sizing: border-box;
+        max-width: 100%;
+        overflow: hidden;
 
         &--height-0 {
             grid-row: span 2;
@@ -152,6 +154,11 @@
         &__info {
             display: flex;
             align-items: flex-end;
+            
+            & > * {
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
         }
 
         &__name {
