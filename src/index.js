@@ -59,7 +59,7 @@ apiRouter.use((err, req, res, next) => {
 
 const app = express();
 app.set('port', port);
-app.set('trust proxy', 'loopback');
+app.set('trust proxy', config.trustProxy);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

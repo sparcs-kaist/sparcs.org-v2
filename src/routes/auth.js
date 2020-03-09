@@ -24,8 +24,8 @@ router.get('/', sparcsRequired, (req, res) => {
 });
 
 router.use('/', (req, res, next) => {
-    if(!isDevMode && req.protocol !== 'https') {
-        res.redirect(`https://${req.hostname}${req.url}`);
+    if(!isDevMode && !req.secure) {
+        res.redirect(`https://${req.hostname}${req.originalUrl}`);
         return;
     }
 
