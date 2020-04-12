@@ -11,7 +11,7 @@ router.get('/available', async (req, res) => {
 
     res.json({
         ok: true,
-        available: isAvailable
+        available: isAvailable === 'true'
     });
 });
 
@@ -23,7 +23,7 @@ router.post('/available', adminRequired, async (req, res) => {
             { key: 'recruiting-info' },
             {
                 key: 'recruiting-info',
-                value: available
+                value: available.toString()
             },
             { upsert: true }
         );
