@@ -36,10 +36,11 @@ router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) =
         seminar.speaker = speaker;
     }
 
-    if(typeof date !== 'number') {
+    const dateParsed = typeof date === 'string' ? parseInt(date) : date;
+    if(typeof dateParsed !== 'number' || !isFinite(dateParsed)) {
         seminar.date = new Date();
     } else {
-        seminar.date = new Date(date);
+        seminar.date = new Date(dateParsed);
     }
 
     const sources = req.files.map(({ key, location }) => ({
