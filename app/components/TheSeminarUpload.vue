@@ -1,6 +1,8 @@
 <template>
     <form class="SeminarUpload" @submit.prevent>
         <h1 class="SeminarUpload__title"> {{ $t('seminar-upload') }} </h1>
+        <p> {{ $t('seminar-warning') }} </p>
+
         <div class="SeminarUpload__row">
             <AppInput class="SeminarUpload__fill" v-model="title" :placeholder="$t('title')" bind />
         </div>
@@ -60,6 +62,10 @@
 <i18n>
     ko:
         seminar-upload: '세미나 업로드'
+        seminar-warning: >
+            업로드 된 파일들은 스팍스 내부 및 외부 모두에게 공개됩니다!
+            업로드 전에 한 번 더 내용을 확인하시고 기밀정보가 포함된 세미나 정보는 업로드 하지 말아주세요.
+
         title: '제목'
         speaker: '발표자'
         date: '발표일자'
