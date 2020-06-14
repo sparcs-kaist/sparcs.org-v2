@@ -52,7 +52,7 @@
         close: '알림 삭제'
 
         description: >
-            SPARCS: Programmers’ Association for Researching Computer Systems
+            System Programmers’ Association for Researching Computer Systems
 
 
             SPARCS는 컴퓨터와 관련된 다양한 이슈에 관심이 있는 사람들이 모여, 다양한 활동을 통해 자신을 성장시키고,
