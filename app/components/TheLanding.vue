@@ -33,7 +33,7 @@
                         Github
                     </a>
 
-                    <a class="Landing__link" href="mailto://staff@sparcs.org">
+                    <a class="Landing__link" href="mailto:staff@sparcs.org">
                         <IconArrow class="Landing__link__icon" />
                         Mail
                     </a>
@@ -87,14 +87,6 @@
 
             &--raw {
                 white-space: normal;
-
-                a {
-                    color: inherit;
-
-                    &:hover {
-                        background: rgba(var(--grey-050_w), 0.2);
-                    }
-                }
             }
         }
 
@@ -273,6 +265,18 @@
 
         .Notification {
             max-width: 40vw;
+        }
+    }
+</style>
+
+<style>
+    .Notification__content--raw {
+        a {
+            color: inherit;
+
+            &:hover {
+                background: rgba(var(--grey-050_w), 0.2);
+            }
         }
     }
 </style>
