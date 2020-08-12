@@ -1,9 +1,16 @@
 <template>
     <div class="Index">
         <TheLanding />
+        <template v-if="recruitingEnabled">
+            <TheMembers class="Index__section" recruiting-enabled />
+        </template>
+
         <TheServices class="Index__section" />
         <TheActivities class="Index__section" />
-        <TheMembers class="Index__section" />
+        
+        <template v-if="!recruitingEnabled">
+            <TheMembers class="Index__section" />
+        </template>
     </div>
 </template>
 
@@ -47,6 +54,12 @@
     import TheServices from "@/components/TheServices";
 
     export default {
+        data() {
+            return {
+                recruitingEnabled: false
+            };
+        },
+
         async beforeRouteEnter(route, from, next) {
             const { code, state } = route.query;
 
@@ -57,6 +70,12 @@
 
             next();
         },
+
+        async created() {
+            const { available } = await api('/recruiting/available');
+            this.recruitingEnabled = available;
+        },
+
 
         components: {
             TheActivities,

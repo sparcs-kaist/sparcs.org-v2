@@ -90,15 +90,10 @@
     import AppLink from "@/components/AppLink";
 
     export default {
-        data() {
-            return {
-                recruitingEnabled: false
-            };
-        },
-
-        async created() {
-            const { available } = await api('/recruiting/available');
-            this.recruitingEnabled = available;
+        props: {
+            recruitingEnabled: {
+                type: Boolean
+            }
         },
 
         components: {
