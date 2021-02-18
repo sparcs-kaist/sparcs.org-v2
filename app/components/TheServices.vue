@@ -63,8 +63,9 @@
             코인노래방을 운영하는 카이스트 학생복지위원회 관리자를 위한 공지사항, 알림, 분실물 게시 서비스도 제공합니다.
 
         service-newara: >
-            현재 운영 중인 학내 커뮤니티 Ara의 새로운 버전입니다.
-            기존의 Ara가 개발된 지 오랜 시간이 지나 레거시 코드가 많고, 업데이트가 힘들어져 새롭게 처음부터 개발중입니다.
+            카이스트의 대표 학내 커뮤니티 Ara의 새로운 버전입니다.
+            '가장 정확한 정보를 가장 신속하게'라는 슬로건을 바탕으로 제작되었습니다.
+            단순 커뮤니티의 기능뿐만 아니라 학교, 단체 공지사항을 빠르게 확인할 수 있는 공간의 역할도 함께 하고 있습니다.
 
         service-otl: >
             OTL PLUS는 매 학기 개설되는 KAIST의 대부분의 과목들에 대한 정보를 쉽게 검색할 수 있게 도와줍니다.
@@ -227,8 +228,7 @@
                         desc: 'service-newara',
                         image: ServiceNewAra,
                         link: 'https://ara-beta.sparcs.org',
-                        github: [ 'new-ara-api', 'new-ara-web' ],
-                        tags: ['development']
+                        github: [ 'new-ara-api', 'new-ara-web' ]
                     },
 
                     {
