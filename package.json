@@ -51,7 +51,7 @@
     "@babel/runtime": "^7.8.4",
     "@khinenw/express-async-router": "^1.0.0",
     "aws-sdk": "^2.631.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "axios-cookiejar-support": "^0.5.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
