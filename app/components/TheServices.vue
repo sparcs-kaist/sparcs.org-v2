@@ -227,7 +227,7 @@
                         name: 'NewAra',
                         desc: 'service-newara',
                         image: ServiceNewAra,
-                        link: 'https://ara-beta.sparcs.org',
+                        link: 'https://newara.sparcs.org',
                         github: [ 'new-ara-api', 'new-ara-web' ]
                     },
 
