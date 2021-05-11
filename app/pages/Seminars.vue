@@ -56,10 +56,14 @@
                 <div class="Seminar__files">
                     <a class="Seminar__file" v-for="source in seminar.sources" :href="source.url"
                         target="_blank" rel="noopener">
-
                         {{ source.name }}
                     </a>
                 </div>
+                <template v-if="seminar.canEdit">
+                    <div class="Seminar__edit">
+                        <a @click="deleteSeminar(seminar)" class="Seminar__delete"> {{ $t('delete-seminar') }} </a>
+                    </div>
+                </template>
             </div>
         </div>
 
@@ -73,6 +77,7 @@
         go-back: '뒤로가기'
         desc: '스팍스에서 진행되었던 세미나의 발표자료입니다.'
         reverse: '역순'
+        delete-seminar: '세미나 삭제'
 </i18n>
 
 <style scoped>
@@ -212,6 +217,23 @@
                 background: var(--grey-780);
             }
         }
+
+        &__edit {
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 12px;
+            margin: 5px 10px;
+            border-radius: 5px;
+            background: var(--alert-level-1);
+            color: var(--alert-foreground-900);
+            font-family: var(--theme-font);
+            text-decoration: none;
+            transition: background .4s ease;
+
+            &:hover {
+                background: var(--alert-level-2);
+            }
+        }
     }
 </style>
 
@@ -322,8 +344,18 @@
         },
 
         methods: {
+            notify(name, result) {
+                this.$store.dispatch('toast/addToastFromApi', { name, result });
+            },
             stringifyDate(date) {
                 return formatDate(date);
+            },
+            async deleteSeminar(seminar) {
+                if (!confirm(`정말 '${seminar.title}'를 삭제하시겠어요?`)) {
+                    return;
+                }
+                const result = await api(`/seminar/${seminar._id}`, 'delete');
+                await this.notify(this.$t('delete-seminar'), result);
             }
         },
 

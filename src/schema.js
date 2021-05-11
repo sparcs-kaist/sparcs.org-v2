@@ -28,7 +28,11 @@ const seminarSchema = new Schema({
         },
         name: String,
         url: String
-    }]
+    }],
+    uploaderId: {
+        type: String,
+        required: false
+    }
 });
 seminarSchema.index({ date: -1 });
 
