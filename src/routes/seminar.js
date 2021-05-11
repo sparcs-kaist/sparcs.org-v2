@@ -7,6 +7,10 @@ const { s3, upload } = require('../middlewares/upload');
 
 const { Seminars } = require('../schema');
 
+const hasEditPermission = (user, seminar) => {
+    return user && (user?.admin || seminar.uploaderId === user?.id);
+}
+
 const router = createAsyncRouter();
 router.get('/', async (req, res) => {
     const seminars = await Seminars
@@ -16,13 +20,23 @@ router.get('/', async (req, res) => {
 
     res.json({
         ok: true,
-        seminars
+        seminars: seminars.map(item => ({
+            _id: item._id,
+            date: item.date,
+            speaker: item.speaker,
+            sources: item.sources,
+            title: item.title,
+            uploaderId: item.uploaderId,
+            canEdit: hasEditPermission(req.sparcsUser, item)
+        }))
     });
 });
 
 router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) => {
     const { title, speaker, date, links } = req.body;
     const seminar = {};
+
+    seminar.uploaderId = req.sparcsUser.id;
 
     if(typeof title !== 'string' || title.length <= 0) {
         seminar.title = 'Untitled Seminar';
@@ -74,13 +88,58 @@ router.post('/', sparcsRequired, upload.array('content', 16), async (req, res) =
     });
 });
 
-router.delete('/:id([a-z0-9]{24})', adminRequired, async (req, res) => {
+router.put('/:id([a-z0-9]{24})', sparcsRequired, async (req, res) => {
     const result = await Seminars.findOne(
         { _id: req.params.id }
     );
 
     if(!result)
         return createError(404, "not-found");
+
+    if(!hasEditPermission(req.sparcsUser, result)) {
+        return createError(403, "unauthorized");
+    }
+
+    const { title, speaker, date } = req.body;
+    const updatePayload = {};
+
+    if(typeof title !== 'string' || title.length <= 0) {
+        updatePayload.title = 'Untitled Seminar';
+    } else {
+        updatePayload.title = title;
+    }
+
+    if(typeof speaker !== 'string' || speaker.length <= 0) {
+        updatePayload.speaker = 'Anonymous';
+    } else {
+        updatePayload.speaker = speaker;
+    }
+
+    const dateParsed = typeof date === 'string' ? parseInt(date) : date;
+    if(typeof dateParsed !== 'number' || !isFinite(dateParsed)) {
+        updatePayload.date = new Date();
+    } else {
+        updatePayload.date = new Date(dateParsed);
+    }
+
+    await Seminars.updateOne({ _id: req.params.id }, updatePayload);
+    
+    res.json({
+        ok: true
+    });
+});
+
+router.delete('/:id([a-z0-9]{24})', sparcsRequired, async (req, res) => {
+    const result = await Seminars.findOne(
+        { _id: req.params.id }
+    );
+
+    if(!result)
+        return createError(404, "not-found");
+
+    if(!hasEditPermission(req.sparcsUser, result)) {
+        return createError(403, "unauthorized");
+    }
 
     const { sources } = result;
     const objects = sources
