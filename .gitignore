@@ -1,4 +1,10 @@
+# NodeJS
 node_modules
 dist
+
+# Config
 config.json
 *.pem
+
+# Docker
+/volumes/

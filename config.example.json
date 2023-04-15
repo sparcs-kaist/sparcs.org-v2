@@ -1,6 +1,6 @@
 {
     "memversUrl": "https://memvers-api.sparcs.org",
-    "mongoUrl": "mongodb://localhost:27017/sparcs-home",
+    "mongoUrl": "mongodb://home-db:27017/sparcs-home",
     "secret": "bunch-of-random-string",
     "jwtMode": "RS256",
     "privateKey": "your-private-key.pem",

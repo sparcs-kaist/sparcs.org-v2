@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  server:
+    container_name: home-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "13000:3000"
+    depends_on:
+      - db
+
+  db:
+    container_name: home-db
+    image: mongo
+    restart: always
+    environment:
+      - TZ="Asia/Seoul"
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./volumes/db:/data/db
+      - ./volumes/dump:/dump
